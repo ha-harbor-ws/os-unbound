@@ -1,0 +1,22 @@
+# Drop-in for OPNsense: copy to /usr/local/etc/unbound.opnsense.d/dnstap.conf
+# then restart Unbound (Services → Unbound → Apply, or pluginctl dns).
+#
+# This block must be at the top level, not under "server:".
+# Do not paste it into the Unbound GUI "Custom options" box — that
+# section is inserted inside server: and will fail to parse.
+#
+# OPNsense chroots Unbound to /var/unbound. The socket path below is
+# the path Unbound sees inside the chroot. On the host that file is
+# /var/unbound/var/run/dnstap-bgp/dnstap.sock — point dnstap-bgp at
+# the same host path:
+#   [dnstap]
+#   listen = "/var/unbound/var/run/dnstap-bgp/dnstap.sock"
+#
+# Create the directory before starting dnstap-bgp:
+#   mkdir -p /var/unbound/var/run/dnstap-bgp
+#   chown unbound:unbound /var/unbound/var/run/dnstap-bgp
+
+dnstap:
+	dnstap-enable: yes
+	dnstap-socket-path: "/var/run/dnstap-bgp/dnstap.sock"
+	dnstap-log-client-response-messages: yes

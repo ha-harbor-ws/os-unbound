@@ -1,0 +1,43 @@
+name: unbound-dnstap
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pkg:
+    name: OPNsense 26.7 pkg (FreeBSD 15.1)
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build package in FreeBSD 15.1 VM
+        uses: vmactions/freebsd-vm@v1
+        with:
+          release: "15.1"
+          arch: x86_64
+          usesh: true
+          mem: "8192"
+          copyback: true
+          prepare: |
+            pkg update -f
+            pkg install -y ca_root_nss
+          run: |
+            tr -d '\r' < scripts/build-opnsense-pkg.sh > /tmp/build-opnsense-pkg.sh
+            tr -d '\r' < scripts/pack-pkg.py > /tmp/pack-pkg.py
+            cp /tmp/pack-pkg.py scripts/pack-pkg.py
+            chmod +x /tmp/build-opnsense-pkg.sh
+            /bin/sh /tmp/build-opnsense-pkg.sh
+
+      - name: Upload pkg
+        uses: actions/upload-artifact@v4
+        with:
+          name: unbound-1.26.0_1-opnsense26.7-freebsd15-amd64
+          path: dist/*.pkg
+          if-no-files-found: error
