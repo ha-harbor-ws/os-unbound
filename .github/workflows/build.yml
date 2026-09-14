@@ -29,11 +29,9 @@ jobs:
             pkg update -f
             pkg install -y ca_root_nss
           run: |
-            tr -d '\r' < scripts/build-opnsense-pkg.sh > /tmp/build-opnsense-pkg.sh
-            tr -d '\r' < scripts/pack-pkg.py > /tmp/pack-pkg.py
-            cp /tmp/pack-pkg.py scripts/pack-pkg.py
-            chmod +x /tmp/build-opnsense-pkg.sh
-            /bin/sh /tmp/build-opnsense-pkg.sh
+            sed -i '' -e 's/\r$//' scripts/build-opnsense-pkg.sh scripts/pack-pkg.py
+            chmod +x scripts/build-opnsense-pkg.sh scripts/pack-pkg.py
+            /bin/sh scripts/build-opnsense-pkg.sh
 
       - name: Upload pkg
         uses: actions/upload-artifact@v4

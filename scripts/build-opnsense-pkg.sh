@@ -117,6 +117,26 @@ install_extra() {
 	cp "$ROOT/files/dnstap.conf.sample" \
 		"$STAGE/usr/local/etc/unbound.opnsense.d/dnstap.conf.sample"
 
+	# как в порте: sample, не рабочий unbound.conf
+	if [ -f "$STAGE/usr/local/etc/unbound/unbound.conf" ]; then
+		mv "$STAGE/usr/local/etc/unbound/unbound.conf" \
+			"$STAGE/usr/local/etc/unbound/unbound.conf.sample"
+	fi
+
+	# FreeBSD pkgconfig живёт в libdata
+	if [ -f "$STAGE/usr/local/lib/pkgconfig/libunbound.pc" ]; then
+		mkdir -p "$STAGE/usr/local/libdata/pkgconfig"
+		mv "$STAGE/usr/local/lib/pkgconfig/libunbound.pc" \
+			"$STAGE/usr/local/libdata/pkgconfig/libunbound.pc"
+		rmdir "$STAGE/usr/local/lib/pkgconfig" 2>/dev/null || true
+	fi
+
+	# libtool leftovers не входят в официальный пакет
+	find "$STAGE" -name '*.la' -delete
+
+	# gzip man pages как в официальном pkg
+	find "$STAGE/usr/local/share/man" -type f ! -name '*.gz' -exec gzip -f {} +
+
 	# лицензии в стиле порта
 	licdir="$STAGE/usr/local/share/licenses/unbound-${PKGVERSION}"
 	mkdir -p "$licdir"
@@ -130,16 +150,15 @@ install_extra() {
 		"$STAGE/usr/local/sbin/unbound-anchor" \
 		"$STAGE/usr/local/sbin/unbound-checkconf" \
 		"$STAGE/usr/local/sbin/unbound-control" \
-		"$STAGE/usr/local/sbin/unbound-host" \
-		"$STAGE/usr/local/lib/libunbound.so"
+		"$STAGE/usr/local/sbin/unbound-host"
 	do
-		if [ -f "$bin" ]; then
+		if [ -f "$bin" ] && [ ! -L "$bin" ]; then
 			strip "$bin" 2>/dev/null || true
 		fi
 	done
-	find "$STAGE" -name '_unbound.so' -exec strip {} + 2>/dev/null || true
+	find "$STAGE" \( -name 'libunbound.so.8.1.39' -o -name '_unbound.so' \) \
+		-type f -exec strip {} + 2>/dev/null || true
 
-	# пустые каталоги, которые есть в официальном пакете
 	mkdir -p "$STAGE/usr/local/etc/unbound"
 }
 
