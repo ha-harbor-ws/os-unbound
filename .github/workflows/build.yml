@@ -36,6 +36,6 @@ jobs:
       - name: Upload pkg
         uses: actions/upload-artifact@v4
         with:
-          name: unbound-1.26.0_1-opnsense26.7-freebsd15-amd64
+          name: unbound-1.26.1_1-opnsense26.7-freebsd15-amd64
           path: dist/*.pkg
           if-no-files-found: error
