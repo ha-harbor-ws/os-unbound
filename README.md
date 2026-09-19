@@ -6,10 +6,15 @@
 
 ## Установка
 
-Скачайте `.pkg` из [Actions](https://github.com/ha-harbor-ws/os-unbound/actions) / Releases и на OPNsense:
+Постоянные ссылки на последний релиз:
+
+- страница: https://github.com/ha-harbor-ws/os-unbound/releases/latest
+- пакет: https://github.com/ha-harbor-ws/os-unbound/releases/latest/download/unbound-latest.pkg
+
+На OPNsense:
 
 ```sh
-pkg add -f unbound-1.26.1_1-opnsense26.7-freebsd15-amd64.pkg
+pkg add -f https://github.com/ha-harbor-ws/os-unbound/releases/latest/download/unbound-latest.pkg
 pkg lock unbound
 unbound -V | grep -i dnstap
 ```

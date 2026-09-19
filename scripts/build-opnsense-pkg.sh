@@ -345,6 +345,8 @@ pack() {
 		--stage "$STAGE" \
 		--manifest "$META" \
 		--output "$out"
+	# стабильное имя для https://github.com/ha-harbor-ws/os-unbound/releases/latest/download/
+	cp -f "$out" "$DIST/unbound-latest.pkg"
 	# проверим, что бинарь собран с dnstap
 	"$STAGE/usr/local/sbin/unbound" -V
 }

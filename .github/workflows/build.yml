@@ -9,6 +9,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: write
+
 jobs:
   pkg:
     name: OPNsense 26.7 pkg (FreeBSD 15.1)
@@ -36,6 +39,33 @@ jobs:
       - name: Upload pkg
         uses: actions/upload-artifact@v4
         with:
-          name: unbound-1.26.1_1-opnsense26.7-freebsd15-amd64
+          name: unbound-opnsense26.7-freebsd15-amd64
           path: dist/*.pkg
           if-no-files-found: error
+
+      - name: Resolve package version
+        id: ver
+        run: |
+          pkg=$(ls dist/unbound-*-opnsense*-freebsd15-amd64.pkg | head -n1)
+          base=$(basename "$pkg")
+          ver=${base#unbound-}
+          ver=${ver%%-opnsense*}
+          echo "tag=v${ver}" >> "$GITHUB_OUTPUT"
+          echo "version=${ver}" >> "$GITHUB_OUTPUT"
+
+      - name: Publish GitHub Release (latest)
+        if: github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.ver.outputs.tag }}
+          name: unbound ${{ steps.ver.outputs.version }} (DNSTAP, OPNsense 26.7)
+          body: |
+            Drop-in replacement for OPNsense 26.7 `unbound` with **DNSTAP** enabled.
+
+            Permanent links:
+            - Release: https://github.com/ha-harbor-ws/os-unbound/releases/latest
+            - Package: https://github.com/ha-harbor-ws/os-unbound/releases/latest/download/unbound-latest.pkg
+          files: |
+            dist/*.pkg
+          make_latest: true
+          fail_on_unmatched_files: true
