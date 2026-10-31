@@ -4,11 +4,11 @@
 set -eu
 
 ROOT=$(CDPATH= cd -- "$(dirname "$0")/.." && pwd)
-DISTVERSION=1.26.1
-PKGVERSION=1.26.1_1
+DISTVERSION=1.26.2
+PKGVERSION=1.26.2_1
 OPNSENSE_ABI=26.7
 SRC_URL="https://www.nlnetlabs.nl/downloads/unbound/unbound-${DISTVERSION}.tar.gz"
-SRC_SHA256="35a6dc0e425a9282c3426d9a3043144011bf0534aed4b73ab62c52aee0af1503"
+SRC_SHA256="d8ee7aa6bbb3ff1be7d9e57637d0d0ec2f18273a8efff1a0afe2c665858b96f7"
 NCPU=$(sysctl -n hw.ncpu 2>/dev/null || echo 2)
 
 WORK="$ROOT/work"
@@ -158,7 +158,7 @@ install_extra() {
 			strip "$bin" 2>/dev/null || true
 		fi
 	done
-	find "$STAGE" \( -name 'libunbound.so.8.1.40' -o -name '_unbound.so' \) \
+	find "$STAGE" \( -name 'libunbound.so.8.1.41' -o -name '_unbound.so' \) \
 		-type f -exec strip {} + 2>/dev/null || true
 
 	mkdir -p "$STAGE/usr/local/etc/unbound"
@@ -303,7 +303,7 @@ manifest = {
     },
     "annotations": {
         "FreeBSD_version": "1501000",
-        "cpe": "cpe:2.3:a:nlnetlabs:unbound:1.26.1:::::freebsd15:x64",
+        "cpe": "cpe:2.3:a:nlnetlabs:unbound:1.26.2:::::freebsd15:x64",
         "product_abi": "$OPNSENSE_ABI",
         "product_arch": "amd64",
         "product_id": "unbound",

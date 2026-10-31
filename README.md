@@ -2,7 +2,7 @@
 
 Порт [dns/unbound](https://github.com/opnsense/ports/tree/master/dns/unbound) для **OPNsense 26.7** (FreeBSD 15.1 / amd64) с включённым **DNSTAP**.
 
-Официальный пакет OPNsense собирается с `DNSTAP=off`. Этот пакет — drop-in замена `unbound-1.26.1` с теми же опциями (включая PYTHON для DNSBL) плюс `--enable-dnstap`.
+Официальный пакет OPNsense собирается с `DNSTAP=off`. Этот пакет — drop-in замена `unbound-1.26.2` с теми же опциями (включая PYTHON для DNSBL) плюс `--enable-dnstap`.
 
 ## Установка
 
